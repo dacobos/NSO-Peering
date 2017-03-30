@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<br><br>
+<div class="datagrid">
+<table>
+  <tr>
+    <td>
+<form action="{{ url_for('createRoutePolicy') }}" method=post>
+      <table>
+        <tr>
+          <th>Create RoutePolicy</th>
+        </tr>
+        <tr>
+          <td>RoutePolicy:</td>
+          <td><input type="text" name="routepolicy"></td>
+        </tr>
+        <tr>
+          <td>PrefixSet:</td>
+          <td>
+            <select name=prefixset>
+              {% for entry in pref %}
+                <dd><option value="{{entry.prefixset}}">{{entry.prefixset}}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><input type=submit value="Create RoutePolicy"></td>
+        </tr>
+      </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('updateRoutePolicy') }}" method=post>
+  <table>
+    <tr>
+      <th>Update RoutePolicy</th>
+    </tr>
+    <tr>
+      <td>RoutePolicy:</td>
+      <td>
+        <select name=updateRoutePolicy>
+          {% for entry in entries %}
+            <dd><option value="{{entry.routepolicy}}">{{entry.routepolicy}}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>New PrefixSet:</td>
+      <td>
+        <select name=prefixset>
+          {% for entry in pref %}
+            <dd><option value="{{entry.prefixset}}">{{entry.prefixset}}</option>
+          {% endfor %}
+        </select>
+
+      </td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Update RoutePolicy"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('deleteRoutePolicy') }}" method=post>
+  <table>
+    <tr>
+      <th>Delete RoutePolicy</th>
+    </tr>
+    <tr>
+      <td>RoutePolicy to delete:</td>
+      <td>
+        <select name=deleteRoutePolicy>
+          {% for entry in entries %}
+            <dd><option value="{{entry.routepolicy}}">{{entry.routepolicy}}</option>
+          {% endfor %}
+        </select>
+
+      </td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Delete RoutePolicy"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+</tr>
+</table>
+</div>
+<br><br>
+<div class="datagrid">
+
+<table>
+  <tr>
+    <th>RoutePolicy</th>
+    <th>PrefixSet</th>
+  </tr>
+  {% for entry in entries %}
+  <tr>
+    <td>{{ entry.routepolicy }}</td>
+    <td>{{ entry.prefixset }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

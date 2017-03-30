@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<br><br>
+<div class="datagrid">
+<table>
+  <tr>
+    <td>
+<form action="{{ url_for('createDevice') }}" method=post>
+      <table>
+        <tr>
+          <th>Create Device</th>
+        </tr>
+        <tr>
+          <td>Device:</td>
+          <td><input type="text" name="device"></td>
+        </tr>
+        <tr>
+          <td>IP Address:</td>
+          <td><input type="text" name="ipAddress"></td>
+        </tr>
+        <tr>
+          <td><input type=submit value="Create Device"></td>
+        </tr>
+      </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('updateDevice') }}" method=post>
+  <table>
+    <tr>
+      <th>Update Device</th>
+    </tr>
+    <tr>
+      <td>Device:</td>
+      <td>
+        <select name=updateDevice>
+          {% for entry in entries %}
+            <dd><option value="{{entry.device}}">{{entry.device}}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>New IP Address:</td>
+      <td><input type="text" name="newipAddress"></td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Update Device"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('deleteDevice') }}" method=post>
+  <table>
+    <tr>
+      <th>Delete Device</th>
+    </tr>
+    <tr>
+      <td>Device to delete:</td>
+      <td>
+        <select name=deleteDevice>
+          {% for entry in entries %}
+            <dd><option value="{{entry.device}}">{{entry.device}}</option>
+          {% endfor %}
+        </select>
+
+      </td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Delete Device"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+</tr>
+</table>
+</div>
+<br><br>
+<div class="datagrid">
+
+<table>
+  <tr>
+    <th>Device</th>
+    <th>IP Address</th>
+  </tr>
+  {% for entry in entries %}
+  <tr>
+    <td>{{ entry.device }}</td>
+    <td>{{ entry.ipAddress }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

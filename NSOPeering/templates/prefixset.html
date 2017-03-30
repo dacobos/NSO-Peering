@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<br><br>
+<div class="datagrid">
+<table>
+  <tr>
+    <td>
+<form action="{{ url_for('createPrefixSet') }}" method=post>
+      <table>
+        <tr>
+          <th>Create PrefixSet</th>
+        </tr>
+        <tr>
+          <td>PrefixSet:</td>
+          <td><input type="text" name="prefixset"></td>
+        </tr>
+        <tr>
+          <td>Device:</td>
+          <td>
+            <select name=device>
+              {% for entry in devs %}
+                <dd><option value="{{entry.device}}">{{entry.device}}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><input type=submit value="Create PrefixSet"></td>
+        </tr>
+      </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('updatePrefixSet') }}" method=post>
+  <table>
+    <tr>
+      <th>Update PrefixSet</th>
+    </tr>
+    <tr>
+      <td>PrefixSet:</td>
+      <td>
+        <select name=updatePrefixSet>
+          {% for entry in entries %}
+            <dd><option value="{{entry.prefixset}}">{{entry.prefixset}}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>New Device:</td>
+      <td>
+        <select name=device>
+          {% for entry in devs %}
+            <dd><option value="{{entry.device}}">{{entry.device}}</option>
+          {% endfor %}
+        </select>
+
+      </td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Update PrefixSet"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+    <td>
+<form action="{{ url_for('deletePrefixSet') }}" method=post>
+  <table>
+    <tr>
+      <th>Delete PrefixSet</th>
+    </tr>
+    <tr>
+      <td>PrefixSet to delete:</td>
+      <td>
+        <select name=deletePrefixSet>
+          {% for entry in entries %}
+            <dd><option value="{{entry.prefixset}}">{{entry.prefixset}}</option>
+          {% endfor %}
+        </select>
+
+      </td>
+    </tr>
+    <tr>
+      <td><input type=submit value="Delete PrefixSet"></td>
+    </tr>
+  </table>
+</form>
+    </td>
+</tr>
+</table>
+</div>
+<br><br>
+<div class="datagrid">
+
+<table>
+  <tr>
+    <th>PrefixSet</th>
+    <th>Device</th>
+  </tr>
+  {% for entry in entries %}
+  <tr>
+    <td>{{ entry.prefixset }}</td>
+    <td>{{ entry.device }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

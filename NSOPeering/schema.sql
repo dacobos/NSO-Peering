@@ -1,7 +1,7 @@
 drop table if exists devices;
-drop table if exists prefixset;
-drop table if exists routepolicy;
-drop table if exists prefix;
+drop table if exists prefixsets;
+drop table if exists routepolicys;
+drop table if exists prefixes;
 
 PRAGMA foreign_keys = ON;
 
@@ -10,21 +10,23 @@ create table devices (
   ipAddress text not null unique
 );
 
-create table prefixset (
-  prefixset text not null primary key,
+create table prefixsets (
+  prefsetId integer primary key autoincrement,
+  prefixset text not null,
   device text not null,
   foreign key (device) references devices(device)
 );
 
-create table routepolicy (
+create table routepolicys (
   routepolicy text not null,
   prefixset text not null,
-  foreign key (prefixset) references prefixset(prefixset)
+  foreign key (prefixset) references prefixsets(prefixset)
 );
 
-create table prefix (
-  device text not null,
-  prefixset text not null,
-  foreign key (device) references devices(device),
-  foreign key (prefixset) references prefixset(prefixset)
+create table prefixes (
+  prefId integer primary key autoincrement,
+  prefsetId integer,
+  prefix text,
+  mask text,
+  foreign key (prefsetId) references prefixsets(prefsetId)
 );

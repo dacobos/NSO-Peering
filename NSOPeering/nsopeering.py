@@ -110,7 +110,7 @@ def deleteDevice():
 def prefixset():
     try:
         db = get_db()
-        entries = db.execute('select * from prefixset').fetchall()
+        entries = db.execute('select * from prefixsets').fetchall()
         devs = db.execute('select * from devices').fetchall()
         return render_template('prefixset.html', entries = entries, devs = devs)
     except sqlite3.Error as e:
@@ -121,7 +121,7 @@ def prefixset():
 def createPrefixSet ():
     try:
         db = get_db()
-        db.execute('insert into prefixset (prefixset, device) values (?,?)',[request.form['prefixset'],request.form['device']])
+        db.execute('insert into prefixsets (prefixset, device) values (?,?)',[request.form['prefixset'],request.form['device']])
         db.commit()
         flash('Prefix Set successfully created')
         return redirect(url_for('prefixset'))
@@ -133,7 +133,7 @@ def createPrefixSet ():
 def updatePrefixSet():
     try:
         db = get_db()
-        db.execute('update prefixset set device = (?) where prefixset = (?)',[request.form['device'],request.form['updatePrefixSet']])
+        db.execute('update prefixsets set device = (?) where prefixset = (?)',[request.form['device'],request.form['updatePrefixSet']])
         db.commit()
         flash('Prefix Set successfully updated')
         return redirect(url_for('prefixset'))
@@ -145,7 +145,7 @@ def updatePrefixSet():
 def deletePrefixSet():
     try:
         db = get_db()
-        db.execute('delete from prefixset where prefixset = (?)',[request.form['deletePrefixSet']])
+        db.execute('delete from prefixsets where prefixset = (?)',[request.form['deletePrefixSet']])
         db.commit()
         flash('Prefix Set successfully deleted')
         return redirect(url_for('prefixset'))
@@ -158,8 +158,8 @@ def deletePrefixSet():
 def routepolicy():
     try:
         db = get_db()
-        entries = db.execute('select * from routepolicy').fetchall()
-        pref = db.execute('select * from prefixset').fetchall()
+        entries = db.execute('select * from routepolicys').fetchall()
+        pref = db.execute('select * from prefixsets').fetchall()
         return render_template('routepolicy.html', entries = entries, pref = pref)
     except sqlite3.Error as e:
         error = "No se pudo realizar la consulta: "+e.args[0]
@@ -170,7 +170,7 @@ def routepolicy():
 def createRoutePolicy ():
     try:
         db = get_db()
-        db.execute('insert into routepolicy (routepolicy, prefixset) values (?,?)',[request.form['routepolicy'],request.form['prefixset']])
+        db.execute('insert into routepolicys (routepolicy, prefixset) values (?,?)',[request.form['routepolicy'],request.form['prefixset']])
         db.commit()
         flash('Route policy successfully created')
         return redirect(url_for('routepolicy'))
@@ -183,7 +183,7 @@ def createRoutePolicy ():
 def updateRoutePolicy():
     try:
         db = get_db()
-        db.execute('update routepolicy set prefixset = (?) where routepolicy = (?)',[request.form['prefixset'],request.form['updateRoutePolicy']])
+        db.execute('update routepolicys set prefixset = (?) where routepolicy = (?)',[request.form['prefixset'],request.form['updateRoutePolicy']])
         db.commit()
         flash('Route policy successfully updated')
         return redirect(url_for('routepolicy'))
@@ -195,10 +195,65 @@ def updateRoutePolicy():
 def deleteRoutePolicy():
     try:
         db = get_db()
-        db.execute('delete from routepolicy where routepolicy = (?)',[request.form['deleteRoutePolicy']])
+        db.execute('delete from routepolicys where routepolicy = (?)',[request.form['deleteRoutePolicy']])
         db.commit()
         flash('Prefix Set successfully deleted')
         return redirect(url_for('routepolicy'))
     except sqlite3.Error as e:
         error = "No se pudo borrar el registro: "+e.args[0]
         return render_template('routepolicy.html', error = error)
+
+@app.route('/prefix', methods=['GET'])
+def prefix():
+    try:
+        db = get_db()
+        entries = db.execute('select prefixes.prefId, prefixsets.device, prefixsets.prefixset, prefixes.prefix, prefixes.mask from prefixsets inner join prefixes on prefixsets.prefsetId = prefixes.prefsetId;').fetchall()
+        pref = db.execute('select * from prefixsets').fetchall()
+        return render_template('prefix.html', entries = entries, pref=pref)
+    except sqlite3.Error as e:
+        error = "No se pudo realizar la consulta: "+e.args[0]
+        return render_template('routepolicy.html', error = error)
+
+@app.route('/movePrefix', methods=['POST'])
+def movePrefix():
+    try:
+        db = get_db()
+        if request.form['param'] == 'Device':
+            entries = db.execute('select prefixes.prefId, prefixsets.device, prefixsets.prefixset, prefixes.prefix, prefixes.mask from prefixsets inner join prefixes on prefixsets.prefsetId = prefixes.prefsetId where prefixsets.device = (?);',[request.form['paramValue']]).fetchall()
+            pref = db.execute('select * from prefixsets').fetchall()
+            return render_template('prefix.html', entries = entries, pref=pref)
+        elif request.form['param'] == 'PrefixSet':
+            entries = db.execute('select prefixes.prefId, prefixsets.device, prefixsets.prefixset, prefixes.prefix, prefixes.mask from prefixsets inner join prefixes on prefixsets.prefsetId = prefixes.prefsetId where prefixsets.prefixset = (?);',[request.form['paramValue']]).fetchall()
+            pref = db.execute('select * from prefixsets').fetchall()
+            return render_template('prefix.html', entries = entries, pref=pref)
+        elif request.form['param'] == 'None':
+            entries = db.execute('select prefixes.prefId, prefixsets.device, prefixsets.prefixset, prefixes.prefix, prefixes.mask from prefixsets inner join prefixes on prefixsets.prefsetId = prefixes.prefsetId;').fetchall()
+            pref = db.execute('select * from prefixsets').fetchall()
+            return render_template('prefix.html', entries = entries, pref=pref)
+        else:
+            entries = db.execute('select * from prefixes').fetchall()
+            for row in entries:
+                if request.form[str(row[0])] == 'True':
+                    db.execute('update prefixes set prefsetId = (?) where prefId = (?)',[request.form['prefsetId'],str(row[0])])
+                    db.commit()
+            flash('Prefix successfully moved')
+            return redirect(url_for('prefix'))
+    except sqlite3.Error as e:
+        error = "No se pudo actualizar el registro: "+e.args[0]
+        return render_template('prefix.html', error = error)
+
+
+@app.route('/moveDevice', methods=['POST'])
+def moveDevice():
+    try:
+        db = get_db()
+        entries = db.execute('select * from prefixes').fetchall()
+        for row in entries:
+            if request.form[str(row[0])] == 'True':
+                db.execute('update prefixes set device = (?), prefixset = (?) where id = (?)',[request.form['device'],request.form['prefixset'],str(row[0])])
+                db.commit()
+        flash('Prefix successfully moved')
+        return redirect(url_for('prefix'))
+    except sqlite3.Error as e:
+        error = "No se pudo actualizar el registro: "+e.args[0]
+        return render_template('prefix.html', error = error)

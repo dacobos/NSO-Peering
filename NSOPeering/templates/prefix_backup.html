@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block body %}
+<form action="{{ url_for('movePrefix') }}" method=post>
+<br><br>
+  <div class="datagrid">
+    <table>
+
+      <tr>
+        <th>Move Selected prefix to:</th>
+      </tr>
+      <tr>
+      <td>
+          <select name=device>
+            {% for entry in pref %}
+              <dd><option value="{{entry.device}}">{{entry.device}}</option>
+            {% endfor %}
+          </select>
+      </td>
+      <td>
+          <select name=prefixset>
+            {% for entry in pref %}
+              <dd><option value="{{entry.prefixset}}">{{entry.prefixset}}</option>
+            {% endfor %}
+          </select>
+      </td>
+      </tr>
+      <tr>
+        <td><input type=submit value="Move to selected Device"></td>
+      </tr>
+      </table>
+
+  </div>
+
+
+<br><br>
+<div class="datagrid">
+<table>
+  <tr>
+    <th>id</th>
+    <th>Device</th>
+    <th>PrfixSet</th>
+    <th>Prefix</th>
+    <th>Mask</th>
+    <th>Selected</th>
+  </tr>
+  {% for entry in entries %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.device }}</td>
+    <td>{{ entry.prefixset }}</td>
+    <td>{{ entry.prefix }}</td>
+    <td>{{ entry.mask }}</td>
+    <td>
+      <input type="checkbox" name="{{ entry.id }}" value="True">
+      <input type="hidden" name="{{ entry.id }}" value="False">
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+</form>
+{% endblock %}

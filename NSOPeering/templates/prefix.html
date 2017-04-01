@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<!-- <script>
+function moveForm() {
+     document.getElementById("moveForm").innerHTML='<form action="{{ url_for('movePrefix') }}" method=post>';
+
+}
+
+</script>
+
+<div id = "moveForm">
+<form action="{{ url_for('movePrefix') }}" method=post>
+</div>
+
+<a href="#" onclick = "moveForm()">
+
+-->
+
+
+<script>
+function placeHolder(){
+  document.getElemetById("placeHolder").innerHTML='<input type="text" name="paramValue" placeholder="<Name of the Device">';
+}
+</script>
+
+<form action="{{ url_for('movePrefix') }}" method=post>
+<br><br>
+  <div class="datagrid">
+    <table>
+
+      <tr>
+        <th>Move selected to (PrefixSet/Device):
+          <select name=prefsetId>
+              <dd><option value="None">--</option>
+            {% for entry in pref %}
+              <dd><option value="{{entry.prefsetId}}">({{entry.prefixset}}/{{entry.device}})</option>
+            {% endfor %}
+          </select>
+        </th>
+        <th>Filter By:
+          <select name=param>
+              <dd><option value="None">--</option>
+              <dd><option value="Device">Device</option>
+              <dd><option value="PrefixSet">PrefixSet</option>
+          </select>
+        </th>
+      </tr>
+      <tr>
+      <td>
+          <input type=submit value="Commit Move">
+      </td>
+      <td>
+        <input type="text" name="paramValue" placeholder="Ex: PE1, TO_INTERNET">
+        <input type=submit value="Apply Filter">
+      </td>
+      </tr>
+      </table>
+  </div>
+<br><br>
+<div class="datagrid">
+<table>
+  <tr>
+    <th>Device</th>
+    <th>PrefixSet</th>
+    <th>Prefix</th>
+    <th>Mask</th>
+    <th>Selected</th>
+  </tr>
+  {% for entry in entries %}
+  <tr>
+    <td>{{ entry.device }}</td>
+    <td>{{ entry.prefixset }}</td>
+    <td>{{ entry.prefix }}</td>
+    <td>{{ entry.mask }}</td>
+    <td>
+      <input type="checkbox" name="{{ entry.prefId }}" value="True">
+      <input type="hidden" name="{{ entry.prefId }}" value="False">
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+</form>
+{% endblock %}
